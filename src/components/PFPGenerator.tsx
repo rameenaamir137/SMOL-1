@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import axios from 'axios';
 
-interface PFPGeneratorProps {}
-
-export default function PFPGenerator({}: PFPGeneratorProps) {
+export default function PFPGenerator() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -107,9 +106,11 @@ export default function PFPGenerator({}: PFPGeneratorProps) {
               
               {previewUrl ? (
                 <div className="space-y-4">
-                  <img
+                  <Image
                     src={previewUrl}
                     alt="Preview"
+                    width={400}
+                    height={192}
                     className="max-w-full h-48 object-cover mx-auto rounded-lg"
                   />
                   <button
@@ -149,9 +150,11 @@ export default function PFPGenerator({}: PFPGeneratorProps) {
             {generatedImage ? (
               <div className="space-y-4 flex-1 flex flex-col">
                 <div className="border-2 border-primary rounded-lg p-6 flex-1 flex flex-col justify-center min-h-[500px] bg-black/50">
-                  <img
+                  <Image
                     src={generatedImage}
                     alt="Generated Smol PFP"
+                    width={400}
+                    height={320}
                     className="w-full h-80 object-contain rounded-lg"
                   />
                 </div>
