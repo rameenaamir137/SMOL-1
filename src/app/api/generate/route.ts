@@ -1,14 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// Dynamic import for Sharp to handle platform-specific issues
-let sharp: any;
-try {
-  sharp = require('sharp');
-} catch (error) {
-  console.error('Sharp import error:', error);
-}
-
 export async function POST(request: NextRequest) {
   try {
     // Check for API key
@@ -49,10 +41,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert file to PNG format for OpenAI API compatibility
+    // Convert file to base64 for OpenAI API
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    
+
     // Check if buffer is empty
     if (buffer.length === 0) {
       return NextResponse.json(
@@ -60,31 +52,11 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
-    // Convert any image format to PNG with RGBA format for OpenAI API compatibility
-    let pngBuffer: Buffer;
-    try {
-      if (!sharp) {
-        throw new Error('Sharp module not available');
-      }
-      
-      pngBuffer = await sharp(buffer)
-        .ensureAlpha() // Ensure alpha channel is present
-        .png()
-        .toBuffer();
-    } catch (sharpError) {
-      console.error('Sharp processing error:', sharpError);
-      
-      // Fallback: try to use the original buffer if Sharp fails
-      if (file.type === 'image/png') {
-        pngBuffer = buffer;
-      } else {
-        return NextResponse.json(
-          { success: false, error: 'Image processing service temporarily unavailable. Please try uploading a PNG file or try again later.' },
-          { status: 500 }
-        );
-      }
-    }
+
+    // Convert to base64 data URL
+    const base64Image = buffer.toString('base64');
+    const mimeType = file.type || 'image/jpeg';
+    const dataUrl = `data:${mimeType};base64,${base64Image}`;
 
     // First, analyze the uploaded image to understand what character we're working with
     const imageAnalysis = await openai.chat.completions.create({
@@ -100,7 +72,7 @@ export async function POST(request: NextRequest) {
             {
               type: "image_url",
               image_url: {
-                url: `data:image/png;base64,${Buffer.from(pngBuffer).toString('base64')}`
+                url: dataUrl
               }
             }
           ]
@@ -134,7 +106,7 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: unknown) {
     console.error('Error generating image:', error);
-    
+
     // Handle specific OpenAI errors
     if (error && typeof error === 'object' && 'code' in error) {
       if (error.code === 'insufficient_quota') {
@@ -143,7 +115,7 @@ export async function POST(request: NextRequest) {
           { status: 429 }
         );
       }
-      
+
       if (error.code === 'invalid_api_key') {
         return NextResponse.json(
           { success: false, error: 'Invalid API key configuration.' },
