@@ -1,26 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
+  --primary: #FF7518;
+  --primary-dark: #E65A00;
+  --accent: #00FF00;
+  --accent-pink: #FF00FF;
+  --accent-blue: #00FFFF;
+  --grid: #333333;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-accent: var(--accent);
+  --color-accent-pink: var(--accent-pink);
+  --color-accent-blue: var(--accent-blue);
+  --color-grid: var(--grid);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-pixel-alt: 'VT323', monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  background-image: 
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 20px 20px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Pixel art animations */
+@keyframes pixel-bounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pixel-walk {
+  0% { transform: translateX(-100px); }
+  100% { transform: translateX(calc(100vw + 100px)); }
+}
+
+@keyframes pixel-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(2deg); }
+  66% { transform: translateY(-10px) rotate(-2deg); }
+}
+
+@keyframes pixel-glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+}
+
+@keyframes pixel-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes neon-glow {
+  0%, 100% { 
+    text-shadow: 
+      0 0 5px var(--primary),
+      0 0 10px var(--primary),
+      0 0 15px var(--primary),
+      0 0 20px var(--primary);
+  }
+  50% { 
+    text-shadow: 
+      0 0 2px var(--primary),
+      0 0 5px var(--primary),
+      0 0 8px var(--primary),
+      0 0 12px var(--primary);
+  }
+}
+
+@keyframes neon-pulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes smol-raid {
+  0% { transform: translateX(-50px) scale(0.5); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(calc(100vw + 50px)) scale(0.5); opacity: 0; }
+}
+
+.pixel-bounce {
+  animation: pixel-bounce 2s ease-in-out infinite;
+}
+
+.pixel-walk {
+  animation: pixel-walk 8s linear infinite;
+}
+
+.pixel-float {
+  animation: pixel-float 3s ease-in-out infinite;
+}
+
+.pixel-glitch {
+  animation: pixel-glitch 0.3s ease-in-out infinite;
+}
+
+.pixel-flicker {
+  animation: pixel-flicker 1s ease-in-out infinite;
+}
+
+.neon-glow {
+  animation: neon-glow 2s ease-in-out infinite;
+}
+
+.neon-pulse {
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+.smol-raid {
+  animation: smol-raid 6s linear infinite;
+}
+
+.pixel-text {
+  font-family: 'Press Start 2P', monospace;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.pixel-text-alt {
+  font-family: 'VT323', monospace;
+  font-size: 1.2em;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Retro button styles */
+.pixel-button {
+  font-family: 'Press Start 2P', monospace;
+  background: var(--primary);
+  color: var(--background);
+  border: 3px solid var(--foreground);
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  image-rendering: pixelated;
+  text-transform: uppercase;
+  font-size: 0.8em;
+}
+
+.pixel-button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 0 var(--foreground),
+    0 0 20px var(--primary),
+    0 0 40px var(--primary);
+}
+
+.pixel-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 0 var(--foreground);
+}
+
+/* Neon accent styles */
+.neon-green {
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent);
+}
+
+.neon-pink {
+  color: var(--accent-pink);
+  text-shadow: 0 0 10px var(--accent-pink);
+}
+
+.neon-blue {
+  color: var(--accent-blue);
+  text-shadow: 0 0 10px var(--accent-blue);
 }
