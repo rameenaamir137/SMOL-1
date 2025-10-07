@@ -6,7 +6,9 @@
   },
   "build": {
     "env": {
-      "SHARP_IGNORE_GLOBAL_LIBVIPS": "1"
+      "SHARP_IGNORE_GLOBAL_LIBVIPS": "1",
+      "SHARP_DIST_BASE_URL": "https://npmmirror.com/mirrors/sharp"
     }
-  }
+  },
+  "installCommand": "npm install --include=optional"
 }
