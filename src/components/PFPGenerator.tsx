@@ -105,14 +105,16 @@ export default function PFPGenerator() {
               />
               
               {previewUrl ? (
-                <div className="space-y-4">
-                  <Image
-                    src={previewUrl}
-                    alt="Preview"
-                    width={400}
-                    height={192}
-                    className="max-w-full h-48 object-cover mx-auto rounded-lg"
-                  />
+                <div className="space-y-4 flex-1 flex flex-col">
+                  <div className="flex-1 flex items-center justify-center">
+                    <Image
+                      src={previewUrl}
+                      alt="Preview"
+                      width={400}
+                      height={400}
+                      className="max-w-full max-h-full object-contain mx-auto rounded-lg"
+                    />
+                  </div>
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     className="pixel-text text-sm text-primary hover:text-primary-dark"
