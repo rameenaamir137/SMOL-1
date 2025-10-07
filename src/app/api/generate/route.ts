@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import sharp from 'sharp';
+
+// Dynamic import for Sharp to handle platform-specific issues
+let sharp: any;
+try {
+  sharp = require('sharp');
+} catch (error) {
+  console.error('Sharp import error:', error);
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -57,16 +64,26 @@ export async function POST(request: NextRequest) {
     // Convert any image format to PNG with RGBA format for OpenAI API compatibility
     let pngBuffer: Buffer;
     try {
+      if (!sharp) {
+        throw new Error('Sharp module not available');
+      }
+      
       pngBuffer = await sharp(buffer)
         .ensureAlpha() // Ensure alpha channel is present
         .png()
         .toBuffer();
     } catch (sharpError) {
       console.error('Sharp processing error:', sharpError);
-      return NextResponse.json(
-        { success: false, error: 'Failed to process image. Please ensure you uploaded a valid image file.' },
-        { status: 400 }
-      );
+      
+      // Fallback: try to use the original buffer if Sharp fails
+      if (file.type === 'image/png') {
+        pngBuffer = buffer;
+      } else {
+        return NextResponse.json(
+          { success: false, error: 'Image processing service temporarily unavailable. Please try uploading a PNG file or try again later.' },
+          { status: 500 }
+        );
+      }
     }
 
     // First, analyze the uploaded image to understand what character we're working with
