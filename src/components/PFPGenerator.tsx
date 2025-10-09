@@ -9,6 +9,7 @@ export default function PFPGenerator() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -55,14 +56,39 @@ export default function PFPGenerator() {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (generatedImage) {
-      const link = document.createElement('a');
-      link.href = generatedImage;
-      link.download = 'smol-pfp.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      setIsDownloading(true);
+      setError(null);
+      
+      try {
+        // Use our download API endpoint
+        const response = await axios.post('/api/download', {
+          imageUrl: generatedImage
+        }, {
+          responseType: 'blob'
+        });
+
+        // Create a blob URL from the response
+        const blob = new Blob([response.data], { type: 'image/png' });
+        const blobUrl = URL.createObjectURL(blob);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'smol-pfp.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up the blob URL
+        URL.revokeObjectURL(blobUrl);
+      } catch (error) {
+        console.error('Download failed:', error);
+        setError('Failed to download image. Please try again.');
+      } finally {
+        setIsDownloading(false);
+      }
     }
   };
 
@@ -163,9 +189,10 @@ export default function PFPGenerator() {
                 
                 <button
                   onClick={handleDownload}
-                  className="w-full pixel-button bg-green-500 hover:bg-green-600 border-green-500"
+                  disabled={isDownloading}
+                  className="w-full pixel-button bg-green-500 hover:bg-green-600 border-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  DOWNLOAD YOUR SMOL PFP
+                  {isDownloading ? 'DOWNLOADING...' : 'DOWNLOAD YOUR SMOL PFP'}
                 </button>
               </div>
             ) : (
