@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
           content: [
             {
               type: "text",
+              //PROMPT FOR GPT-40
               text: "Describe this image in detail, focusing on the character's appearance, clothing, accessories, and any distinctive features. Be specific about colors, style, and any unique elements that should be preserved in a pixel art version. Keep it concise but descriptive."
             },
             {
@@ -86,6 +87,7 @@ export async function POST(request: NextRequest) {
     // Use DALL-E 3 to generate a completely new pixel art character from the description
     const response = await openai.images.generate({
       model: "dall-e-3",
+      //PROMPT FOR DALL-E-3
       prompt: `Create a small pixel art character based on this description: "${characterDescription}". Transform this into a retro 8-bit pixel art character. The character should be centered on a flat solid orange background (#FA8947). Make it look like classic 32-bit pixel art with simple, blocky proportions. The figure should be very small, occupying only about 20% of the canvas height, positioned exactly in the middle. Keep all recognizable features but make them extremely simplified and pixelated. The style should be minimalistic and low-resolution, similar to old video game sprites. No shadows, gradients, realistic details, or extra background elements. Pure pixel art aesthetic with orange background.`,
       n: 1,
       size: "1024x1024",
